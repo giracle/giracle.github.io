@@ -1,0 +1,624 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="giracle">
+  <meta name="keywords" content="">
+  <title>人脸检测之landmark点 - G&#39;blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Giracle</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      giracle
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-10-31 12:04" pubdate>
+        2020年10月31日 中午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.6k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      17
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">人脸检测之landmark点</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：2 个月前
+                
+              </p>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="人脸检测之landmark点"><a href="#人脸检测之landmark点" class="headerlink" title="人脸检测之landmark点"></a>人脸检测之landmark点</h1><h2 id="ASM-Active-Shape-Model"><a href="#ASM-Active-Shape-Model" class="headerlink" title="ASM(Active Shape Model)"></a>ASM(Active Shape Model)</h2><p>ASM是一种基于分布模型(Point Distribution Model, PDM)的算法。在PDM中，外形相似的物体，例如人脸，人手，心脏，肺部等的几何形状可以通过若干关键点(Landmarks)的坐标依次串联形成一个形状向量来表示。<strong>ASM算法</strong>需要通过<strong>人工标定</strong>的方法先<strong>标定训练集</strong>，经过<strong>训练获得外形模型</strong>，再通过<strong>关键点的匹配实现特定物体的匹配</strong>。</p>
+<p>ASM主要分为两步。第一步：训练。首先，构建形状模型：搜集n个训练样本(n=400)；<strong>手动标记脸部关键点</strong>；将训练集中关键点的坐标串成特征向量；<strong>对形状进行归一化和对齐(对齐采用Procrustes方法)</strong>；<strong>对对齐后的形状特征做PCA处理</strong>。<strong>局部特征一般用梯度特征</strong>，以防光照变化。有的方法沿着边缘的法线方向提取，有的方法在关键点附近的矩形区域提取。第二步：搜索。首先：<strong>计算眼睛(或者眼睛和嘴巴)的位置，做简单的尺度和旋转变化，对齐人脸</strong>；接着，在对齐后的各个点附近搜索，<strong>匹配每个局部关键点(常采用马式距离)，得到初步形状</strong>；再<strong>用平均人脸(形状模型)修正匹配结果；迭代直到收敛</strong>。</p>
+<p><img src="https://external-30160.picsz.qpic.cn/e3705648ba6feac90d264c407677e82b" srcset="/img/loading.gif" alt="ASM"></p>
+<h2 id="AAM-Active-Appearance-Models"><a href="#AAM-Active-Appearance-Models" class="headerlink" title="AAM(Active Appearance Models)"></a>AAM(Active Appearance Models)</h2><p>AAM是对ASM的改进，不仅采用形状约束，而且又加入整个人脸区域的纹理特征。AAM和ASM一样，主要分为两个阶段，模型建立阶段和模型匹配阶段。其中，模型建立阶段包括对训练样本分别建立形状模型(Shape Model)和纹理模型(Texture Model)，然后将这两个模型进行结合，形成AAM模型。</p>
+<p><img src="https://external-30160.picsz.qpic.cn/d846d9c43397c1241439253e76be12e1" srcset="/img/loading.gif" alt="AAM"></p>
+<h2 id="CPR-Cascded-pose-regression"><a href="#CPR-Cascded-pose-regression" class="headerlink" title="CPR(Cascded pose regression)"></a>CPR(Cascded pose regression)</h2><p>CPR，级联姿势回归，通过一系列回归器将一个指定的初始预测值逐步细化，每一个回归器都依靠前一个回归器的输出来执行简单的图像操作，整个系统可自动的从训练样本中学习。</p>
+<p>人脸关键点检测的目的是估计向量，其中k表示关键点的个数，由于每个关键点有横纵两个坐标，所以S得长度为2k。CPR检测流程图如下图所示，一共有T个阶段，在每个阶段中首先进行特征提取，得到ft，这里使用的是shape-indexed features，也可以使用诸如HOG，SIFT等人工设计的特征，或者其他可学习特征(learning based features)，然后通过训练得到的回归器R来估计增量ΔS(update vector),把ΔS加到前一个阶段的S上得到新的S，这样通过不断的迭代即可以得到最终的S(Shape).</p>
+<p><img src="https://external-30160.picsz.qpic.cn/743d610dda5d05b7f50540d07a895e71" srcset="/img/loading.gif" alt="CPR"></p>
+<h2 id="深度学习方法"><a href="#深度学习方法" class="headerlink" title="深度学习方法"></a>深度学习方法</h2><h3 id="级联CNN"><a href="#级联CNN" class="headerlink" title="级联CNN"></a>级联CNN</h3><p>一种级联的CNN(拥有三个层级)——DCNN(Deep Convolutional Network)，此种方法属于级联回归方法。通过精心设计拥有三个层级的级联卷积神经网络，不仅改善淡出不当导致陷入局部最优的问题，而且借助于CNN强大的特征提取能力，获得更为精准的关键点检测。</p>
+<p>如图所示，DCNN由三个Level构成。Level-1由3个CNN组成；Level-2由10个CNN组成(每个关键点采用两个CNN)；Level-3同样由10个CNN组成。</p>
+<p><img src="https://external-30160.picsz.qpic.cn/178fde9cf090a29741c83ddbb140254e" srcset="/img/loading.gif" alt="DCNN"></p>
+<h3 id="DCNN模型的改进"><a href="#DCNN模型的改进" class="headerlink" title="DCNN模型的改进"></a>DCNN模型的改进</h3><p>Face++在DCNN模型上进行改进，提出从粗到精的人脸关键点检测算法，实现了68个人脸关键点的高精度定位。该算法将人脸关键点分为内部关键点和轮廓关键点，内部关键点包含眉毛，眼睛，鼻子，嘴巴共计51个关键点，轮廓关键点包含17个关键点。</p>
+<p>针对内部关键点和外部关键点，该算法并行的采用两个级联的CNN进行关键点检测，网络结构如图所示</p>
+<p><img src="https://external-30160.picsz.qpic.cn/1fbf050b73b8a0c78fc4571de4e25450" srcset="/img/loading.gif" alt="twoCNN"></p>
+<p>针对性内部51个关键点，采用四个层级的级联网络进行检测。其中，level-1主要作用是获得面部器官的边界框；level-2的输出是51个关键点预测位置，这里起到一个粗定位作用，目的是为了给level-3进行初始化；level-3会依据不同器官进行从粗到精的定位；level-4的输入是将level-3的输出进行一定的旋转，最终将51个关键点的位置进行输出。针对外部17个关键点，仅采用两个层级的级联网络进行检测。level-1与内部关键点检测的作用一样，主要是获得轮廓的bounding box；level-2直接预测17个关键点，没有从粗到精定位的过程，因为轮廓关键点的区域位置较大，若加上level-3和level-4，会比较耗时间。最终面部68个关键点由两个级联CNN的输出进行叠加得到。</p>
+<p>算法主要创新点由一下三点：(1)把人脸的关键点定位问题，划分为内部关键点和轮廓关键点分开预测，有效的避免了loss不均衡问题；(2)在内部关键点检测部分，并未像DCNN那样每个关键点采用两个CNN进行预测，而是每个器官采用一个CNN进行预测，从而减少计算量；(3)相比于DCNN，没有直接采用人脸检测器返回的结果作为输入，而是增加一个边界框检测层(level-1)，可以大大提高关键点粗定位网络的精度。</p>
+<h3 id="MTCNN"><a href="#MTCNN" class="headerlink" title="MTCNN"></a>MTCNN</h3><p>多任务级联卷积神经网络(MTCNN,Multi-task Cascaded Convolution Network),同时处理检测人脸检测和人脸关键点定位问题。人脸检测和人脸关键点检测两个任务之间往往存在着潜在的联系，基于两种任务之间潜在的联系，提出一种多任务级联的人脸检测框架，将人脸检测和人脸关键点检测同时进行。</p>
+<p>MTCNN包含三个级联的多任务卷积神经网络，分别是Proposal Network(P-Net)，Refine Network(R-Net),Output Network(O-Net),每个多任务卷积神经网络均有三个学习任务，分别是人脸分类，边框回归和关键点定位。网络结构如图所示：</p>
+<p><img src="https://external-30160.picsz.qpic.cn/2b1ca82ac536354fe6116468938c61b0" srcset="/img/loading.gif" alt="MTCNN"></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E4%BA%BA%E8%84%B8%E6%A3%80%E6%B5%8B/">人脸检测</a>
+                    
+                      <a class="hover-with-bg" href="/tags/landmark/">landmark</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/11/03/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E7%9A%84%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">机器学习算法的实际应用</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/10/26/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%80/">
+                        <span class="hidden-mobile">机器学习一</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+  <div class="col-lg-7 mx-auto nopadding-md">
+    <div class="container custom post-content mx-auto">
+      <img src="https://octodex.github.com/images/jetpacktocat.png" srcset="/img/loading.gif" class="rounded mx-auto d-block mt-5" style="width:150px; height:150px;">
+    </div>
+  </div>
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+    
+  </div>
+      
+</footer>
+
+<!-- SCRIPTS -->
+      <script>
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?40e24d3558c98dd3e9221ced57c63344";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "人脸检测之landmark点&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript">
+      //定义获取词语下标
+      var a_idx = 0;
+      jQuery(document).ready(function ($) {
+        //点击body时触发事件
+        $("body").click(function (e) {
+          //需要显示的词语
+          var a = new Array("富强", "民主", "文明", "和谐", "自由", "平等", "公正", "法治", "爱国", "敬业", "诚信", "友善");
+          //设置词语给span标签
+          var $i = $("<span/>").text(a[a_idx]);
+          //下标等于原来下标+1  余 词语总数
+          a_idx = (a_idx + 1) % a.length;
+          //获取鼠标指针的位置，分别相对于文档的左和右边缘。
+          //获取x和y的指针坐标
+          var x = e.pageX, y = e.pageY;
+          //在鼠标的指针的位置给$i定义的span标签添加css样式
+          $i.css({
+            "z-index": 999,
+            "top": y - 20,
+            "left": x,
+            "position": "absolute",
+            "font-weight": "bold",
+            "color": rand_color()
+          });
+          // 随机颜色
+          function rand_color() {
+            return "rgb(" + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + ")"
+          }
+          //在body添加这个标签
+          $("body").append($i);
+          //animate() 方法执行 CSS 属性集的自定义动画。
+          //该方法通过CSS样式将元素从一个状态改变为另一个状态。CSS属性值是逐渐改变的，这样就可以创建动画效果。
+          //详情请看http://www.w3school.com.cn/jquery/effect_animate.asp
+          $i.animate({
+            //将原来的位置向上移动180
+            "top": y - 180,
+            "opacity": 0
+            //1500动画的速度
+          }, 1500, function () {
+            //时间到了自动删除
+            $i.remove();
+          });
+        });
+      })
+      ;
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?40e24d3558c98dd3e9221ced57c63344";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+</body>
+</html>

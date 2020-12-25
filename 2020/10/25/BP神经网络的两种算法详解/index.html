@@ -1,0 +1,728 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="giracle">
+  <meta name="keywords" content="">
+  <title>BP神经网络的两种算法详解 - G&#39;blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Giracle</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      giracle
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-10-25 21:54" pubdate>
+        2020年10月25日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.4k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      17
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">BP神经网络的两种算法详解</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：2 个月前
+                
+              </p>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="BP神经网络的两种算法"><a href="#BP神经网络的两种算法" class="headerlink" title="BP神经网络的两种算法"></a>BP神经网络的两种算法</h1><h2 id="最小二乘法"><a href="#最小二乘法" class="headerlink" title="最小二乘法"></a>最小二乘法</h2><p>最小二乘法(LS算法) 是一种数学优化技术，也是一种机器学习的常用算法。它通过最小化误差的平方和寻找数据的最佳函数匹配。利用最小二乘法可以简便地求得未知的数据，并使这些数据与实际数据之间误差的平方和为最小。最小二乘法还可以用于曲线拟合，其他一些优化问题也可通过最小化能量或者最大化熵用最小二乘法来表达。如下图所示</p>
+<p><img src="https://external-30160.picsz.qpic.cn/eaa6a4de0ee791ba3ae21f7b4f773e91" srcset="/img/loading.gif" alt="最小二乘法原理"></p>
+<p>从上图可以看到，若干个点依次分布在向量空间中，如果希望找出一条直线和这些点达到最佳匹配，那么最简单的一个方法就是希望这些点到直线的值最小，即下面最小二乘法实现公式最小。</p>
+<p>$ f(x) = ax + b $</p>
+<p>$\sigma = \sum(f(x_i)-y_i)^2$</p>
+<p>这里直接应用的是<strong>真实值与计算值之间的差的平方和</strong>。</p>
+<p>PS：这种差值有一种专门的名称-“<strong>残差</strong>”，基于此，表达残差的方式有以下三种：</p>
+<ul>
+<li><p>范数：残差绝对值的最大值$\max_{1\leq{i}\leq{m}}\mid{r_i}\mid$</p>
+</li>
+<li><p>L1-范数：绝对残差和$\sum_{i=1}^{m}\mid{r_i}\mid$</p>
+</li>
+<li><p>L2-范数：残差平方和$\sum_{i=1}^{m}{r_i^2}$</p>
+</li>
+</ul>
+<p><strong>所谓最小二乘法是L2-范数的一个具体应用。通俗的说就是看模型计算的结果与真实值之间的相似性</strong>。</p>
+<p>因此，最小二乘法的定义可为：对于给定的数据$(x_i,y_i) (i=1,2,\cdots,m)$,在确定的假设空间H种，求解$f(x)\in{H}$,使得残差$\sigma=\sum(f(x_i)-y_i)^2$的L2-范数最小。</p>
+<p>其中，函数f(x)是一条多项式曲线：$f(x,w)=w_0+w_0x+w_0x^2+w_0x^3+\cdots+w_0x^n$</p>
+<p>即最小二乘法就是找到一组权重w，使得$\sigma=\sum(f(x_i)-y_i)^2$最小。那如何使得最小二乘法最小呢？可以通过数学上的<strong>微积分</strong>处理方法获得。这是一个<strong>求极值的问题</strong>，只需要<strong>对权值依次求偏导数，最后令偏导数为0即可求出极值点</strong>。</p>
+<script type="math/tex; mode=display">\frac{\partial f}{\partial w_0}=2\sum_{1}^{m}(w_0+w_0x_i-y_i)=0</script><p>$\frac{\partial f}{\partial w_1}=2\sum_{1}^{m}(w_0+w_1x_i-y_i)x_i=0$</p>
+<p>.</p>
+<p>$\frac{\partial f}{\partial w_n}=2\sum_{1}^{m}(w_0+w_nx_i-y_i)x_i=0$</p>
+<h2 id="梯度下降算法"><a href="#梯度下降算法" class="headerlink" title="梯度下降算法"></a>梯度下降算法</h2><p>模拟随机梯度下降算法的演示图：</p>
+<p><img src="https://external-30160.picsz.qpic.cn/6af85e4dd980333a7cdef4d1b2d92084" srcset="/img/loading.gif" alt="随机梯度下降演示"></p>
+<p>从上面的图可以看出，随机梯度下降算法就是不停地寻找某个节点中下降幅度最大的那个趋势进行迭代计算，直到将数据收缩到符合要求的范围为止。数学公式如下：</p>
+<p>$f(\theta)=\theta_0x_0+\theta_1x_1+\cdots+\theta_nx_n=\sum{\theta_ix_i}$</p>
+<p>在随机梯度下降算法中，对于系数需要通过不停地求解出当前位置下最优化的数据。需要不停地对系数$\theta$求偏导数，即公式如下：</p>
+<p>$\frac{\partial f(\theta)}{\partial \theta}=\frac{\partial (\frac {\sum(f(\theta)-y_i)^2}{2}}{\partial \theta}=(f(\theta)-y)x_i$</p>
+<p>公式中$\theta$会向着梯度下降最快的方向减少，从而推断出$\theta$的最优解</p>
+<p>因此可以说随机梯度下降算法最终被归结为通过迭代计算特征值从而求出最合适的值。$\theta$求解公式如下：</p>
+<p>$\theta=\theta-\alpha(f(\theta-y_i)x_i$其中$\alpha$为下降系数，就是用以计算每次下降的幅度大小。系数越大，每次计算的差值越大；系数越小，差值越小，但是计算时间相对延长。</p>
+<p>随机梯度下降算法将梯度下降算法通过一个模型来表示：</p>
+<div class="hljs"><pre><code class="hljs flow">st&#x3D;&gt;start: 数据集
+cond&#x3D;&gt;condition: 拟合算法
+cond1&#x3D;&gt;condition: 迭代计算
+e&#x3D;&gt;end: 计算结果
+st-&gt;cond(yes)-&gt;e
+cond(no)-&gt;cond1(right)
+cond1(no)-&gt;cond
+</code></pre></div>
+<p>从图中可以看到，实现随机梯度下降算法的关键是拟合算法的实现。</p>
+<p>随机梯度下降算法在神经网络特别是机器学习中应用较广，但存在缺陷，如<strong>噪声较多</strong>，使得在计算过程中并不是都向着整体最优解的方向优化，往往可能只是一个局部最优解。为了克服这些困难，一个最好的办法就是<strong>增大数据量</strong>，在不停地使用数据进行迭代处理的时候，能够<strong>确保整体的方向是全局最优解，或者最优解结果在全局最优解附近</strong>。</p>
+<p>示例代码：</p>
+<div class="hljs"><pre><code class="hljs python">x=[(<span class="hljs-number">2</span>,<span class="hljs-number">0</span>,<span class="hljs-number">3</span>),(<span class="hljs-number">1</span>,<span class="hljs-number">0</span>,<span class="hljs-number">3</span>),(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,<span class="hljs-number">3</span>),(<span class="hljs-number">1</span>,<span class="hljs-number">4</span>,<span class="hljs-number">2</span>),(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">4</span>)]
+y=[<span class="hljs-number">5</span>,<span class="hljs-number">6</span>,<span class="hljs-number">8</span>,<span class="hljs-number">10</span>,<span class="hljs-number">11</span>]
+epsilon = <span class="hljs-number">0.002</span>
+alpha=<span class="hljs-number">0.02</span>
+diff=[<span class="hljs-number">0</span>,<span class="hljs-number">0</span>]
+max_itor=<span class="hljs-number">1000</span>
+error0 = <span class="hljs-number">0</span>
+error1 = <span class="hljs-number">0</span>
+cnt = <span class="hljs-number">0</span>
+m = len(x)
+theta0 = <span class="hljs-number">0</span>
+theta1 = <span class="hljs-number">0</span>
+theta2 = <span class="hljs-number">0</span>
+<span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:
+    cnt+=<span class="hljs-number">1</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(m):
+        diff[<span class="hljs-number">0</span>] = (theta0 * x[i][<span class="hljs-number">0</span>] + theta1 * x[i][<span class="hljs-number">1</span>] + theta2 * x[i][<span class="hljs-number">2</span>]) - y[i]
+        theta0 -= alpha * diff[<span class="hljs-number">0</span>] * x[i][<span class="hljs-number">0</span>]
+        theta1 -= alpha * diff[<span class="hljs-number">0</span>] * x[i][<span class="hljs-number">1</span>]
+        theta2 -= alpha * diff[<span class="hljs-number">0</span>] * x[i][<span class="hljs-number">2</span>]
+    error1 = <span class="hljs-number">0</span>
+    <span class="hljs-keyword">for</span> lp <span class="hljs-keyword">in</span> range(len(x)):
+        error1 += (y[lp] - (theta0 + theta1 * x[lp][<span class="hljs-number">1</span>] + theta2 * x[lp][<span class="hljs-number">2</span>])) ** <span class="hljs-number">2</span> /<span class="hljs-number">2</span>
+    <span class="hljs-keyword">if</span> abs(error1 - error0) &lt; epsilon:
+        <span class="hljs-keyword">break</span>
+    <span class="hljs-keyword">else</span>:
+        error0 = error1
+print(<span class="hljs-string">&#x27;theta0:&#123;&#125;\t,theta1:&#123;&#125;\t,theta2:&#123;&#125;\t,error1:&#123;&#125;\t&#x27;</span>.format(theta0,theta1,theta2,error1))
+print(<span class="hljs-string">&#x27;Done:theta0:&#123;&#125;\t,theta1:&#123;&#125;\t,theta2:&#123;&#125;\t&#x27;</span>.format(theta0,theta1,theta2))
+print(<span class="hljs-string">&#x27;共迭代了&#123;&#125;次&#x27;</span>.format(cnt))</code></pre></div>
+<div class="hljs"><pre><code class="hljs angelscript">打印结果如下：
+theta0:<span class="hljs-number">0.10068424882118833</span>	,theta1:<span class="hljs-number">1.564907273960638</span>	,theta2:<span class="hljs-number">1.9206523428135973</span>	,error1:<span class="hljs-number">0.5694590368814925</span>	
+Done:theta0:<span class="hljs-number">0.10068424882118833</span>	,theta1:<span class="hljs-number">1.564907273960638</span>	,theta2:<span class="hljs-number">1.9206523428135973</span>	
+共迭代了<span class="hljs-number">24</span>次</code></pre></div>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">BP神经网络</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B3%95/">最小二乘法</a>
+                    
+                      <a class="hover-with-bg" href="/tags/%E9%9A%8F%E6%9C%BA%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E7%AE%97%E6%B3%95/">随机梯度下降算法</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/10/26/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%80/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">机器学习一</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/09/27/CSMA-CD%E4%B8%8ECSMA-CA%E7%9A%84%E6%A6%82%E5%BF%B5/">
+                        <span class="hidden-mobile">CSMA/CD与CSMA/CA的概念、区别与应用</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+  <div class="col-lg-7 mx-auto nopadding-md">
+    <div class="container custom post-content mx-auto">
+      <img src="https://octodex.github.com/images/jetpacktocat.png" srcset="/img/loading.gif" class="rounded mx-auto d-block mt-5" style="width:150px; height:150px;">
+    </div>
+  </div>
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+    
+  </div>
+      
+</footer>
+
+<!-- SCRIPTS -->
+      <script>
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?40e24d3558c98dd3e9221ced57c63344";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "BP神经网络的两种算法详解&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+  
+
+  
+    <!-- MathJax -->
+    <script>
+      MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']]
+        },
+        options: {
+          renderActions: {
+            findScript: [10, doc => {
+              document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+                const display = !!node.type.match(/; *mode=display/);
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+                const text = document.createTextNode('');
+                node.parentNode.replaceChild(text, node);
+                math.start = { node: text, delim: '', n: 0 };
+                math.end = { node: text, delim: '', n: 0 };
+                doc.math.push(math);
+              });
+            }, '', false],
+            insertedScript: [200, () => {
+              document.querySelectorAll('mjx-container').forEach(node => {
+                let target = node.parentNode;
+                if (target.nodeName.toLowerCase() === 'li') {
+                  target.parentNode.classList.add('has-jax');
+                }
+              });
+            }, '', false]
+          }
+        }
+      };
+    </script>
+
+    <script async src="https://cdn.staticfile.org/mathjax/3.0.5/es5/tex-svg.js" ></script>
+
+  
+
+
+
+  
+  
+    <script type="text/javascript">
+      //定义获取词语下标
+      var a_idx = 0;
+      jQuery(document).ready(function ($) {
+        //点击body时触发事件
+        $("body").click(function (e) {
+          //需要显示的词语
+          var a = new Array("富强", "民主", "文明", "和谐", "自由", "平等", "公正", "法治", "爱国", "敬业", "诚信", "友善");
+          //设置词语给span标签
+          var $i = $("<span/>").text(a[a_idx]);
+          //下标等于原来下标+1  余 词语总数
+          a_idx = (a_idx + 1) % a.length;
+          //获取鼠标指针的位置，分别相对于文档的左和右边缘。
+          //获取x和y的指针坐标
+          var x = e.pageX, y = e.pageY;
+          //在鼠标的指针的位置给$i定义的span标签添加css样式
+          $i.css({
+            "z-index": 999,
+            "top": y - 20,
+            "left": x,
+            "position": "absolute",
+            "font-weight": "bold",
+            "color": rand_color()
+          });
+          // 随机颜色
+          function rand_color() {
+            return "rgb(" + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + ")"
+          }
+          //在body添加这个标签
+          $("body").append($i);
+          //animate() 方法执行 CSS 属性集的自定义动画。
+          //该方法通过CSS样式将元素从一个状态改变为另一个状态。CSS属性值是逐渐改变的，这样就可以创建动画效果。
+          //详情请看http://www.w3school.com.cn/jquery/effect_animate.asp
+          $i.animate({
+            //将原来的位置向上移动180
+            "top": y - 180,
+            "opacity": 0
+            //1500动画的速度
+          }, 1500, function () {
+            //时间到了自动删除
+            $i.remove();
+          });
+        });
+      })
+      ;
+    </script>
+  
+
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/mermaid/8.5.0/mermaid.min.js" ></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({"theme":"default"});
+    }
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?40e24d3558c98dd3e9221ced57c63344";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+  
+  <entry>
+    <title>机器学习算法的实际应用</title>
+    <link href="/2020/11/03/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E7%9A%84%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8/"/>
+    <url>/2020/11/03/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E7%9A%84%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8/</url>
+    
+    <content type="html"><![CDATA[<p><a href="https://tianchi.aliyun.com/notebook-ai/detail?postId=6239">https://tianchi.aliyun.com/notebook-ai/detail?postId=6239</a></p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>机器学习</tag>
+      
+      <tag>算法介绍</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>人脸检测之landmark点</title>
+    <link href="/2020/10/31/%E4%BA%BA%E8%84%B8%E6%A3%80%E6%B5%8B%E4%B9%8Blandmark%E7%82%B9/"/>
+    <url>/2020/10/31/%E4%BA%BA%E8%84%B8%E6%A3%80%E6%B5%8B%E4%B9%8Blandmark%E7%82%B9/</url>
+    
+    <content type="html"><![CDATA[<h1 id="人脸检测之landmark点"><a href="#人脸检测之landmark点" class="headerlink" title="人脸检测之landmark点"></a>人脸检测之landmark点</h1><h2 id="ASM-Active-Shape-Model"><a href="#ASM-Active-Shape-Model" class="headerlink" title="ASM(Active Shape Model)"></a>ASM(Active Shape Model)</h2><p>ASM是一种基于分布模型(Point Distribution Model, PDM)的算法。在PDM中，外形相似的物体，例如人脸，人手，心脏，肺部等的几何形状可以通过若干关键点(Landmarks)的坐标依次串联形成一个形状向量来表示。<strong>ASM算法</strong>需要通过<strong>人工标定</strong>的方法先<strong>标定训练集</strong>，经过<strong>训练获得外形模型</strong>，再通过<strong>关键点的匹配实现特定物体的匹配</strong>。</p><p>ASM主要分为两步。第一步：训练。首先，构建形状模型：搜集n个训练样本(n=400)；<strong>手动标记脸部关键点</strong>；将训练集中关键点的坐标串成特征向量；<strong>对形状进行归一化和对齐(对齐采用Procrustes方法)</strong>；<strong>对对齐后的形状特征做PCA处理</strong>。<strong>局部特征一般用梯度特征</strong>，以防光照变化。有的方法沿着边缘的法线方向提取，有的方法在关键点附近的矩形区域提取。第二步：搜索。首先：<strong>计算眼睛(或者眼睛和嘴巴)的位置，做简单的尺度和旋转变化，对齐人脸</strong>；接着，在对齐后的各个点附近搜索，<strong>匹配每个局部关键点(常采用马式距离)，得到初步形状</strong>；再<strong>用平均人脸(形状模型)修正匹配结果；迭代直到收敛</strong>。</p><p><img src="https://external-30160.picsz.qpic.cn/e3705648ba6feac90d264c407677e82b" alt="ASM"></p><h2 id="AAM-Active-Appearance-Models"><a href="#AAM-Active-Appearance-Models" class="headerlink" title="AAM(Active Appearance Models)"></a>AAM(Active Appearance Models)</h2><p>AAM是对ASM的改进，不仅采用形状约束，而且又加入整个人脸区域的纹理特征。AAM和ASM一样，主要分为两个阶段，模型建立阶段和模型匹配阶段。其中，模型建立阶段包括对训练样本分别建立形状模型(Shape Model)和纹理模型(Texture Model)，然后将这两个模型进行结合，形成AAM模型。</p><p><img src="https://external-30160.picsz.qpic.cn/d846d9c43397c1241439253e76be12e1" alt="AAM"></p><h2 id="CPR-Cascded-pose-regression"><a href="#CPR-Cascded-pose-regression" class="headerlink" title="CPR(Cascded pose regression)"></a>CPR(Cascded pose regression)</h2><p>CPR，级联姿势回归，通过一系列回归器将一个指定的初始预测值逐步细化，每一个回归器都依靠前一个回归器的输出来执行简单的图像操作，整个系统可自动的从训练样本中学习。</p><p>人脸关键点检测的目的是估计向量，其中k表示关键点的个数，由于每个关键点有横纵两个坐标，所以S得长度为2k。CPR检测流程图如下图所示，一共有T个阶段，在每个阶段中首先进行特征提取，得到ft，这里使用的是shape-indexed features，也可以使用诸如HOG，SIFT等人工设计的特征，或者其他可学习特征(learning based features)，然后通过训练得到的回归器R来估计增量ΔS(update vector),把ΔS加到前一个阶段的S上得到新的S，这样通过不断的迭代即可以得到最终的S(Shape).</p><p><img src="https://external-30160.picsz.qpic.cn/743d610dda5d05b7f50540d07a895e71" alt="CPR"></p><h2 id="深度学习方法"><a href="#深度学习方法" class="headerlink" title="深度学习方法"></a>深度学习方法</h2><h3 id="级联CNN"><a href="#级联CNN" class="headerlink" title="级联CNN"></a>级联CNN</h3><p>一种级联的CNN(拥有三个层级)——DCNN(Deep Convolutional Network)，此种方法属于级联回归方法。通过精心设计拥有三个层级的级联卷积神经网络，不仅改善淡出不当导致陷入局部最优的问题，而且借助于CNN强大的特征提取能力，获得更为精准的关键点检测。</p><p>如图所示，DCNN由三个Level构成。Level-1由3个CNN组成；Level-2由10个CNN组成(每个关键点采用两个CNN)；Level-3同样由10个CNN组成。</p><p><img src="https://external-30160.picsz.qpic.cn/178fde9cf090a29741c83ddbb140254e" alt="DCNN"></p><h3 id="DCNN模型的改进"><a href="#DCNN模型的改进" class="headerlink" title="DCNN模型的改进"></a>DCNN模型的改进</h3><p>Face++在DCNN模型上进行改进，提出从粗到精的人脸关键点检测算法，实现了68个人脸关键点的高精度定位。该算法将人脸关键点分为内部关键点和轮廓关键点，内部关键点包含眉毛，眼睛，鼻子，嘴巴共计51个关键点，轮廓关键点包含17个关键点。</p><p>针对内部关键点和外部关键点，该算法并行的采用两个级联的CNN进行关键点检测，网络结构如图所示</p><p><img src="https://external-30160.picsz.qpic.cn/1fbf050b73b8a0c78fc4571de4e25450" alt="twoCNN"></p><p>针对性内部51个关键点，采用四个层级的级联网络进行检测。其中，level-1主要作用是获得面部器官的边界框；level-2的输出是51个关键点预测位置，这里起到一个粗定位作用，目的是为了给level-3进行初始化；level-3会依据不同器官进行从粗到精的定位；level-4的输入是将level-3的输出进行一定的旋转，最终将51个关键点的位置进行输出。针对外部17个关键点，仅采用两个层级的级联网络进行检测。level-1与内部关键点检测的作用一样，主要是获得轮廓的bounding box；level-2直接预测17个关键点，没有从粗到精定位的过程，因为轮廓关键点的区域位置较大，若加上level-3和level-4，会比较耗时间。最终面部68个关键点由两个级联CNN的输出进行叠加得到。</p><p>算法主要创新点由一下三点：(1)把人脸的关键点定位问题，划分为内部关键点和轮廓关键点分开预测，有效的避免了loss不均衡问题；(2)在内部关键点检测部分，并未像DCNN那样每个关键点采用两个CNN进行预测，而是每个器官采用一个CNN进行预测，从而减少计算量；(3)相比于DCNN，没有直接采用人脸检测器返回的结果作为输入，而是增加一个边界框检测层(level-1)，可以大大提高关键点粗定位网络的精度。</p><h3 id="MTCNN"><a href="#MTCNN" class="headerlink" title="MTCNN"></a>MTCNN</h3><p>多任务级联卷积神经网络(MTCNN,Multi-task Cascaded Convolution Network),同时处理检测人脸检测和人脸关键点定位问题。人脸检测和人脸关键点检测两个任务之间往往存在着潜在的联系，基于两种任务之间潜在的联系，提出一种多任务级联的人脸检测框架，将人脸检测和人脸关键点检测同时进行。</p><p>MTCNN包含三个级联的多任务卷积神经网络，分别是Proposal Network(P-Net)，Refine Network(R-Net),Output Network(O-Net),每个多任务卷积神经网络均有三个学习任务，分别是人脸分类，边框回归和关键点定位。网络结构如图所示：</p><p><img src="https://external-30160.picsz.qpic.cn/2b1ca82ac536354fe6116468938c61b0" alt="MTCNN"></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>神经网络</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>人脸检测</tag>
+      
+      <tag>landmark</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>机器学习一</title>
+    <link href="/2020/10/26/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%80/"/>
+    <url>/2020/10/26/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%80/</url>
+    
+    <content type="html"><![CDATA[<h1 id="机器学习-一"><a href="#机器学习-一" class="headerlink" title="机器学习(一)"></a>机器学习(一)</h1><h2 id="监督学习"><a href="#监督学习" class="headerlink" title="监督学习"></a>监督学习</h2><p>If you have a friend who owns a house that is, say 750 square feet, and he want to know how much they can get for the house?</p><p><img src="https://external-30160.picsz.qpic.cn/f073cd777bcbd01c904e81635b19462d" alt="house"></p><p>那么学习算法能帮你干什么呢？</p><p>如果绘制一次函数，则可能售价为150w美元，而如果绘制二次函数，则可能售价为200w美元，所以无论使用哪种模型，都不好卖出更好的价格。</p><p>但这是机器学习算法很好的一个例子-<strong>监督学习</strong></p><p>监督学习是指，给定数据集，其中包含了正确答案，也就是说，对于房价样本，都给出正确的价格，算法的目的就是给出更多的正确答案。</p><p>这也被称为<strong>回归问题(Regression： Predict continuous valued, output(price) )</strong></p><hr><p><img src="https://external-30160.picsz.qpic.cn/2aa1d1d40be51eb6a7899f56810cbe8d" alt="tumorsize"></p><p>通过对TumorSize大小的研究，来判断肿瘤是恶性(1)的还是良性(0)的。</p><p><img src="https://external-30160.picsz.qpic.cn/38a09bff7ea7225cb9e1d3df583d6cd6" alt="tumorsize2"></p><p>上图中，给定样本蓝色标识为良性样本，红色标识为恶性样本。机器学习的用处是当某人处于粉色标识处时，判断该肿瘤是恶性还是良性的。</p><p>这是一种<strong>分类问题(Classification: Discrete valued, output (0 or 1))</strong></p><p>在实际处理结果中，有时你可能有两个以上的可能的输出值</p><hr><p><strong>以上是单变量的案例</strong></p><p>当案例的变量为两个或以上时，</p><p><img src="https://external-30160.picsz.qpic.cn/32d1c1442046dee36980336ff4f3d74f" alt="tumorsize3"></p><p>上图中，变量为age和tumor size，当粉色标识位于此时，判断是否为良性或恶心肿瘤。</p><h2 id="无监督学习"><a href="#无监督学习" class="headerlink" title="无监督学习"></a>无监督学习</h2><p>Supervised Learning</p><p><img src="https://external-30160.picsz.qpic.cn/72b7c8f2b78b0639b339b2cc4ca6a5b8" alt="spuervisedLearning"></p><p>监督学习中给定的样本是已经指定好了正确答案。不同的标签具有不同的答案，但是答案已给定。</p><p>Unspuervised Learning</p><p><img src="https://external-30160.picsz.qpic.cn/2144285c0fc62a327a80a022b35afc45" alt="unsupervisedlearning"></p><p>无监督学习中给定的样本都具有相同的标签或者都没有标签。</p><p>当拿到这个数据集时，无监督学习可能会将上图中分为两簇，右上和左下，这也是<strong>聚类算法</strong></p><p>应用聚类算法的案例就是<a href="https://new.google.com">Google新闻</a>，google每天收集几万甚至更多的新闻，然后将其聚类,同一主题的新闻会被分类到一块显示。</p><h2 id="线性回归"><a href="#线性回归" class="headerlink" title="线性回归"></a>线性回归</h2><p>假设下图是房屋面积与价格的关系散点图</p><p><img src="https://external-30160.picsz.qpic.cn/0ff3fda342926c1ad8cad679b722c20d" alt="house"></p><p>如果想售卖该房子，且房屋大小为1250平方英尺，那么能卖多少钱呢？</p><p><img src="https://external-30160.picsz.qpic.cn/375e7d50dad5b285565bd303e4156400" alt="trainset"></p><p>训练数据集，工作内容是从上面这些数据中预测房屋的售价。</p><p><img src="https://external-30160.picsz.qpic.cn/7d1c6bf9edb54542bfe2b7b41989c5a2" alt="linearRegression"></p><script type="math/tex; mode=display">h_\theta(x)=\theta_0+\theta_1x</script><p>已知<script type="math/tex">h_\theta(x)</script>和<script type="math/tex">x</script>,然后不断求<script type="math/tex">\theta_0</script>和<script type="math/tex">\theta_1</script>。</p><p>不同的<script type="math/tex">\theta_0</script>和<script type="math/tex">\theta_1</script>会得到不同的函数图像。</p><p><img src="https://external-30160.picsz.qpic.cn/8ff690dd2ad9860dac3d394ed2e17eef" alt="minisize"></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>机器学习</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>机器学习</tag>
+      
+      <tag>监督学习</tag>
+      
+      <tag>无监督学习</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>BP神经网络的两种算法详解</title>
+    <link href="/2020/10/25/BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E4%B8%A4%E7%A7%8D%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/"/>
+    <url>/2020/10/25/BP%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E4%B8%A4%E7%A7%8D%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/</url>
+    
+    <content type="html"><![CDATA[<h1 id="BP神经网络的两种算法"><a href="#BP神经网络的两种算法" class="headerlink" title="BP神经网络的两种算法"></a>BP神经网络的两种算法</h1><h2 id="最小二乘法"><a href="#最小二乘法" class="headerlink" title="最小二乘法"></a>最小二乘法</h2><p>最小二乘法(LS算法) 是一种数学优化技术，也是一种机器学习的常用算法。它通过最小化误差的平方和寻找数据的最佳函数匹配。利用最小二乘法可以简便地求得未知的数据，并使这些数据与实际数据之间误差的平方和为最小。最小二乘法还可以用于曲线拟合，其他一些优化问题也可通过最小化能量或者最大化熵用最小二乘法来表达。如下图所示</p><p><img src="https://external-30160.picsz.qpic.cn/eaa6a4de0ee791ba3ae21f7b4f773e91" alt="最小二乘法原理"></p><p>从上图可以看到，若干个点依次分布在向量空间中，如果希望找出一条直线和这些点达到最佳匹配，那么最简单的一个方法就是希望这些点到直线的值最小，即下面最小二乘法实现公式最小。</p><p>$ f(x) = ax + b $</p><p>$\sigma = \sum(f(x_i)-y_i)^2$</p><p>这里直接应用的是<strong>真实值与计算值之间的差的平方和</strong>。</p><p>PS：这种差值有一种专门的名称-“<strong>残差</strong>”，基于此，表达残差的方式有以下三种：</p><ul><li><p>范数：残差绝对值的最大值$\max_{1\leq{i}\leq{m}}\mid{r_i}\mid$</p></li><li><p>L1-范数：绝对残差和$\sum_{i=1}^{m}\mid{r_i}\mid$</p></li><li><p>L2-范数：残差平方和$\sum_{i=1}^{m}{r_i^2}$</p></li></ul><p><strong>所谓最小二乘法是L2-范数的一个具体应用。通俗的说就是看模型计算的结果与真实值之间的相似性</strong>。</p><p>因此，最小二乘法的定义可为：对于给定的数据$(x_i,y_i) (i=1,2,\cdots,m)$,在确定的假设空间H种，求解$f(x)\in{H}$,使得残差$\sigma=\sum(f(x_i)-y_i)^2$的L2-范数最小。</p><p>其中，函数f(x)是一条多项式曲线：$f(x,w)=w_0+w_0x+w_0x^2+w_0x^3+\cdots+w_0x^n$</p><p>即最小二乘法就是找到一组权重w，使得$\sigma=\sum(f(x_i)-y_i)^2$最小。那如何使得最小二乘法最小呢？可以通过数学上的<strong>微积分</strong>处理方法获得。这是一个<strong>求极值的问题</strong>，只需要<strong>对权值依次求偏导数，最后令偏导数为0即可求出极值点</strong>。</p><script type="math/tex; mode=display">\frac{\partial f}{\partial w_0}=2\sum_{1}^{m}(w_0+w_0x_i-y_i)=0</script><p>$\frac{\partial f}{\partial w_1}=2\sum_{1}^{m}(w_0+w_1x_i-y_i)x_i=0$</p><p>.</p><p>$\frac{\partial f}{\partial w_n}=2\sum_{1}^{m}(w_0+w_nx_i-y_i)x_i=0$</p><h2 id="梯度下降算法"><a href="#梯度下降算法" class="headerlink" title="梯度下降算法"></a>梯度下降算法</h2><p>模拟随机梯度下降算法的演示图：</p><p><img src="https://external-30160.picsz.qpic.cn/6af85e4dd980333a7cdef4d1b2d92084" alt="随机梯度下降演示"></p><p>从上面的图可以看出，随机梯度下降算法就是不停地寻找某个节点中下降幅度最大的那个趋势进行迭代计算，直到将数据收缩到符合要求的范围为止。数学公式如下：</p><p>$f(\theta)=\theta_0x_0+\theta_1x_1+\cdots+\theta_nx_n=\sum{\theta_ix_i}$</p><p>在随机梯度下降算法中，对于系数需要通过不停地求解出当前位置下最优化的数据。需要不停地对系数$\theta$求偏导数，即公式如下：</p><p>$\frac{\partial f(\theta)}{\partial \theta}=\frac{\partial (\frac {\sum(f(\theta)-y_i)^2}{2}}{\partial \theta}=(f(\theta)-y)x_i$</p><p>公式中$\theta$会向着梯度下降最快的方向减少，从而推断出$\theta$的最优解</p><p>因此可以说随机梯度下降算法最终被归结为通过迭代计算特征值从而求出最合适的值。$\theta$求解公式如下：</p><p>$\theta=\theta-\alpha(f(\theta-y_i)x_i$其中$\alpha$为下降系数，就是用以计算每次下降的幅度大小。系数越大，每次计算的差值越大；系数越小，差值越小，但是计算时间相对延长。</p><p>随机梯度下降算法将梯度下降算法通过一个模型来表示：</p><pre><code class="hljs flow">st&#x3D;&gt;start: 数据集cond&#x3D;&gt;condition: 拟合算法cond1&#x3D;&gt;condition: 迭代计算e&#x3D;&gt;end: 计算结果st-&gt;cond(yes)-&gt;econd(no)-&gt;cond1(right)cond1(no)-&gt;cond</code></pre><p>从图中可以看到，实现随机梯度下降算法的关键是拟合算法的实现。</p><p>随机梯度下降算法在神经网络特别是机器学习中应用较广，但存在缺陷，如<strong>噪声较多</strong>，使得在计算过程中并不是都向着整体最优解的方向优化，往往可能只是一个局部最优解。为了克服这些困难，一个最好的办法就是<strong>增大数据量</strong>，在不停地使用数据进行迭代处理的时候，能够<strong>确保整体的方向是全局最优解，或者最优解结果在全局最优解附近</strong>。</p><p>示例代码：</p><pre><code class="hljs python">x=[(<span class="hljs-number">2</span>,<span class="hljs-number">0</span>,<span class="hljs-number">3</span>),(<span class="hljs-number">1</span>,<span class="hljs-number">0</span>,<span class="hljs-number">3</span>),(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,<span class="hljs-number">3</span>),(<span class="hljs-number">1</span>,<span class="hljs-number">4</span>,<span class="hljs-number">2</span>),(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">4</span>)]y=[<span class="hljs-number">5</span>,<span class="hljs-number">6</span>,<span class="hljs-number">8</span>,<span class="hljs-number">10</span>,<span class="hljs-number">11</span>]epsilon = <span class="hljs-number">0.002</span>alpha=<span class="hljs-number">0.02</span>diff=[<span class="hljs-number">0</span>,<span class="hljs-number">0</span>]max_itor=<span class="hljs-number">1000</span>error0 = <span class="hljs-number">0</span>error1 = <span class="hljs-number">0</span>cnt = <span class="hljs-number">0</span>m = len(x)theta0 = <span class="hljs-number">0</span>theta1 = <span class="hljs-number">0</span>theta2 = <span class="hljs-number">0</span><span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:    cnt+=<span class="hljs-number">1</span>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(m):        diff[<span class="hljs-number">0</span>] = (theta0 * x[i][<span class="hljs-number">0</span>] + theta1 * x[i][<span class="hljs-number">1</span>] + theta2 * x[i][<span class="hljs-number">2</span>]) - y[i]        theta0 -= alpha * diff[<span class="hljs-number">0</span>] * x[i][<span class="hljs-number">0</span>]        theta1 -= alpha * diff[<span class="hljs-number">0</span>] * x[i][<span class="hljs-number">1</span>]        theta2 -= alpha * diff[<span class="hljs-number">0</span>] * x[i][<span class="hljs-number">2</span>]    error1 = <span class="hljs-number">0</span>    <span class="hljs-keyword">for</span> lp <span class="hljs-keyword">in</span> range(len(x)):        error1 += (y[lp] - (theta0 + theta1 * x[lp][<span class="hljs-number">1</span>] + theta2 * x[lp][<span class="hljs-number">2</span>])) ** <span class="hljs-number">2</span> /<span class="hljs-number">2</span>    <span class="hljs-keyword">if</span> abs(error1 - error0) &lt; epsilon:        <span class="hljs-keyword">break</span>    <span class="hljs-keyword">else</span>:        error0 = error1print(<span class="hljs-string">&#x27;theta0:&#123;&#125;\t,theta1:&#123;&#125;\t,theta2:&#123;&#125;\t,error1:&#123;&#125;\t&#x27;</span>.format(theta0,theta1,theta2,error1))print(<span class="hljs-string">&#x27;Done:theta0:&#123;&#125;\t,theta1:&#123;&#125;\t,theta2:&#123;&#125;\t&#x27;</span>.format(theta0,theta1,theta2))print(<span class="hljs-string">&#x27;共迭代了&#123;&#125;次&#x27;</span>.format(cnt))</code></pre><pre><code class="hljs angelscript">打印结果如下：theta0:<span class="hljs-number">0.10068424882118833</span>,theta1:<span class="hljs-number">1.564907273960638</span>,theta2:<span class="hljs-number">1.9206523428135973</span>,error1:<span class="hljs-number">0.5694590368814925</span>Done:theta0:<span class="hljs-number">0.10068424882118833</span>,theta1:<span class="hljs-number">1.564907273960638</span>,theta2:<span class="hljs-number">1.9206523428135973</span>共迭代了<span class="hljs-number">24</span>次</code></pre>]]></content>
+    
+    
+    <categories>
+      
+      <category>BP神经网络</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>最小二乘法</tag>
+      
+      <tag>随机梯度下降算法</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>CSMA/CD与CSMA/CA的概念、区别与应用</title>
+    <link href="/2020/09/27/CSMA-CD%E4%B8%8ECSMA-CA%E7%9A%84%E6%A6%82%E5%BF%B5/"/>
+    <url>/2020/09/27/CSMA-CD%E4%B8%8ECSMA-CA%E7%9A%84%E6%A6%82%E5%BF%B5/</url>
+    
+    <content type="html"><![CDATA[<h1 id="CSMA-CD与CSMA-CA的概念、区别与应用"><a href="#CSMA-CD与CSMA-CA的概念、区别与应用" class="headerlink" title="CSMA/CD与CSMA/CA的概念、区别与应用"></a>CSMA/CD与CSMA/CA的概念、区别与应用</h1><h2 id="CSMA-CD概述"><a href="#CSMA-CD概述" class="headerlink" title="CSMA/CD概述"></a>CSMA/CD概述</h2><p>CSMA/CD协议(Carrier Sense Multiple Access with Collision Detection) ,即<strong>载波帧听，多路访问/冲突检测</strong></p><p><strong>载波侦听</strong>：多个计算机在发送数据帧前，首先帧听是否空闲，如果空闲，则发送数据帧；否则等待，继续帧听直到信道空闲</p><p><strong>多路访问</strong>：许多计算机以多点接入方式连接在一根总线上，都有访问总线的权利</p><hr><p><strong>CSMA/CD控制方式原理</strong></p><p>​     各工作站在发送数据前，需先帧听信道是否空闲。</p><p>​        —-&gt; 若空闲，则立即发送数据；</p><p>​        —-&gt; 若信道忙碌，则等待一段时间直到信道中的信息传输结束后再发送数据；</p><p>​        —-&gt; 若在上一段信息发送结束后，同时有两个或两个以上节点都提出发送请求，则判定为冲突；若帧听到冲突，则所有节点立即停止发送数据，等待一段随机时间，再重新尝试发送。</p><p>如下图所示：</p><p><img src="http://cdn.mc.huluxia.net/g4/M01/5D/3E/rBAAdl9wbrOAFX8-ADrFCFsMOZ0091.gif" alt="CSMA/CD控制方式"></p><p><strong>CSMA/CD控制方式作用</strong>：提供寻址和媒体存取的控制方式，使得不同设备或网络上的节点可以在多点的网络上通信而不相互冲突。</p><hr><p><strong>CSMA/CD特点</strong></p><ol><li>使用CSMA/CD协议的以太网不能进行全双工通信，而只能进行双向交替通信(半双工通信)</li><li>计算机发送数据帧之后的一小段时间内，存在着遭遇冲突的可能性</li><li>冲突不确定性使整个以太网平均数据率远小于以太网最高数据率</li></ol><hr><h2 id="CSMA-CA概述"><a href="#CSMA-CA概述" class="headerlink" title="CSMA/CA概述"></a>CSMA/CA概述</h2><p>CSMA/CA (Carrier Sense Multiple Access with Collision Avoidance)，即<strong>载波侦听多路访问/冲突避免</strong></p><p>采用该协议要求设备要 <strong>主动避免冲突</strong>而非被动侦测的方式来解决问题。</p><hr><p><strong>避免冲突的方法</strong>主要有两个：</p><ul><li><ol><li>监听到信道空闲时，并不是立即发送，而是等待一段时间再发送数据。</li></ol></li><li><ol><li>先发送一个很小的信道帧测帧RTS，如果收到最近的接入点返回的CTS，就认为信道是空闲的，然后再发送数据</li></ol></li></ul><hr><p>协议的主要流程：</p><p>当某个站点发送数据帧时：</p><ol><li>先检测信道(进行载波侦听)</li><li>目的站若正确收到此帧，则经过<strong>时间间隔SIFS</strong>后，向源站发送<strong>确认帧ACK</strong></li><li>所有其他站都设置<strong>网络分配向量NAV(Network Allocation Vector)</strong>，表明在这段时间内信道忙，不能发送数据</li><li>当确认帧ACK结束时，NAV（信道忙）也就结束了。在经历了帧间间隔之后，接着会出现一段空闲时间，叫作<strong>争用窗口</strong>，表示在这段时间内有可能出现各站点争用信道的情况</li><li>争用信道比较复杂，因为有关站点要执行退避算法</li></ol><hr><p>为了尽量避免碰撞，所有的站在完成发送后，必须再等待一段很短的时间（继续监听）才能发送下一帧。这段时间通俗称为<strong>帧间间隔IFS</strong>。</p><p><strong>SIFS</strong> —- 短帧间间隔，长度为28us。SIFS是最短的帧间间隔，用来分割开属于一次对话的各帧。在这段时间内，一个站点应当能够从发送方式切换到接收方式。</p><p><strong>DIFS</strong> —- 分布协调功能帧间间隔，它比SIFS的帧间间隔要长的多，长度为128us，在DCF方式下，DIFS用来发送数据帧和管理帧。</p><hr><p><strong>CSMA/CA 在信道空闲还要等待一段时间</strong>，这是因为考虑到可能有其他的站有一高优先级的帧要发送。如果有，就要让高优先级的帧先发送。</p><p><strong>停止等待协议是一种可靠传输协议</strong>。</p><p>争用窗口：</p><hr><p><strong>CSMA/CD 和 CSMA/CA两者区别</strong></p><ul><li>CSMA/CD主要着眼点在冲突的帧测，当帧测到冲突时，进行相应的处理，要求设备能一边帧测一遍发送数据</li><li>CSMA/CA主要着眼点在冲突的避免，协议里也看到经常是等待一段时间再做动作，通过退避尽量去避免冲突，还有就是先发送一些特别小的信道帧测帧来测试信道是否有冲突。</li></ul><hr><h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><p>​    CSMA/CD 主要适用<strong>以太网</strong></p><p>​    CSMA/CA 主要适用<strong>无线局域网</strong></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>计算机网络</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>计算机网络</tag>
+      
+      <tag>无线网络</tag>
+      
+      <tag>CMSA/CA</tag>
+      
+      <tag>CMSA/CD</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  
+</search>
