@@ -81,4 +81,15 @@
   
   
   
+  <entry>
+    <title>404</title>
+    <link href="/"/>
+    <url>/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+  </entry>
+  
+  
+  
 </search>
