@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://giracle.github.io/2023/05/30/baidu_verify_codeva-af86aRG7dE/</loc>
+    
+    <lastmod>2023-05-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://giracle.github.io/2023/05/30/hello-world/</loc>
     
     <lastmod>2023-05-30</lastmod>
@@ -40,7 +49,7 @@
 
   <url>
     <loc>https://giracle.github.io/</loc>
-    <lastmod>2023-05-30</lastmod>
+    <lastmod>2023-05-31</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -48,28 +57,28 @@
   
   <url>
     <loc>https://giracle.github.io/tags/Python/</loc>
-    <lastmod>2023-05-30</lastmod>
+    <lastmod>2023-05-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://giracle.github.io/tags/Java/</loc>
-    <lastmod>2023-05-30</lastmod>
+    <lastmod>2023-05-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://giracle.github.io/tags/Hexo/</loc>
-    <lastmod>2023-05-30</lastmod>
+    <lastmod>2023-05-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://giracle.github.io/tags/Fluid/</loc>
-    <lastmod>2023-05-30</lastmod>
+    <lastmod>2023-05-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
@@ -78,7 +87,7 @@
   
   <url>
     <loc>https://giracle.github.io/categories/Hexo/</loc>
-    <lastmod>2023-05-30</lastmod>
+    <lastmod>2023-05-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
